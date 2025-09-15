@@ -3,7 +3,6 @@ import passport from "passport";
 import {
   Strategy as GoogleStrategy,
 } from "passport-google-oauth20";
-import { envConfig } from "./index";
 import { User } from "../modules/user/user.model";
 
 import { Strategy as LocalStrategy } from "passport-local";
@@ -36,12 +35,14 @@ passport.use(
         }
     })
 )
+
+
 passport.use(
   new GoogleStrategy(
     {
-      clientID: "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",
-      clientSecret: "397124424966-i13dfcj8p845h7ff1fm9eq55dgik136r.apps.googleusercontent.com",
-      callbackURL: "http://localhost:5173/api/v1/auth/google/callback",
+      clientID: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL as string,
     },
     async (accessToken, refreshToken, profile, done) => {
       const email = profile.emails?.[0].value;
