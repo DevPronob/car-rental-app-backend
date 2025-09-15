@@ -1,0 +1,18 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DriverRoutes = void 0;
+const express_1 = require("express");
+const driver_controller_1 = require("./driver.controller");
+const user_constant_1 = require("../user/user.constant");
+const auth_1 = require("../../middlewares/auth");
+const route = (0, express_1.Router)();
+route.post('/create', (0, auth_1.auth)([user_constant_1.Role.RIDER]), driver_controller_1.DriverControllers.createDriver);
+route.get('/', (0, auth_1.auth)([user_constant_1.Role.ADMIN]), driver_controller_1.DriverControllers.getAllDrivers);
+route.get('/earnings', (0, auth_1.auth)([user_constant_1.Role.DRIVER]), driver_controller_1.DriverControllers.getEarinings);
+route.patch('/:id/status', (0, auth_1.auth)([user_constant_1.Role.DRIVER]), driver_controller_1.DriverControllers.updateDriverStatus);
+route.patch('/approve/:id', (0, auth_1.auth)([user_constant_1.Role.ADMIN]), driver_controller_1.DriverControllers.approveDriver);
+route.patch('/suspend/:id', (0, auth_1.auth)([user_constant_1.Role.ADMIN]), driver_controller_1.DriverControllers.suspendDriver);
+route.patch('/availablity', (0, auth_1.auth)([user_constant_1.Role.DRIVER]), driver_controller_1.DriverControllers.updateAvailablity);
+route.patch('/update', (0, auth_1.auth)([user_constant_1.Role.DRIVER]), driver_controller_1.DriverControllers.updateDriver);
+route.get('/:id', driver_controller_1.DriverControllers.getDriverById);
+exports.DriverRoutes = route;

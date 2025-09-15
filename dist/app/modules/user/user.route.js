@@ -1,0 +1,17 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UserRoutes = void 0;
+const express_1 = require("express");
+const user_controller_1 = require("./user.controller");
+const auth_1 = require("../../middlewares/auth");
+const user_constant_1 = require("./user.constant");
+const router = (0, express_1.Router)();
+router.patch("/admin/update", (0, auth_1.auth)([user_constant_1.Role.ADMIN]), user_controller_1.UserControllers.adminUpdateProfile);
+router.get("/", (0, auth_1.auth)([user_constant_1.Role.ADMIN]), user_controller_1.UserControllers.getAllUsers);
+router.get("/me", (0, auth_1.auth)([user_constant_1.Role.DRIVER, user_constant_1.Role.RIDER, user_constant_1.Role.ADMIN]), user_controller_1.UserControllers.getMe);
+router.patch("/unblock/:id", (0, auth_1.auth)([user_constant_1.Role.ADMIN]), user_controller_1.UserControllers.unBlockUser);
+router.patch("/block/:id", (0, auth_1.auth)([user_constant_1.Role.ADMIN]), user_controller_1.UserControllers.blockUser);
+router.delete("/delete/:id", (0, auth_1.auth)([user_constant_1.Role.ADMIN]), user_controller_1.UserControllers.deleteUser);
+router.patch("/update/rider/:id", (0, auth_1.auth)([user_constant_1.Role.RIDER]), user_controller_1.UserControllers.updateProfile);
+router.get("/:id", (0, auth_1.auth)([user_constant_1.Role.ADMIN, user_constant_1.Role.RIDER]), user_controller_1.UserControllers.getUserById);
+exports.UserRoutes = router;

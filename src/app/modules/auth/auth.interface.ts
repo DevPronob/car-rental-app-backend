@@ -1,0 +1,1 @@
+export type TRole = "DRIVER" | "ADMIN" | "USER";
