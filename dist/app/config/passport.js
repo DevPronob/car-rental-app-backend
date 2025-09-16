@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const passport_1 = __importDefault(require("passport"));
 const passport_google_oauth20_1 = require("passport-google-oauth20");
-const index_1 = require("./index");
 const user_model_1 = require("../modules/user/user.model");
 const passport_local_1 = require("passport-local");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
@@ -45,9 +44,9 @@ passport_1.default.use(new passport_local_1.Strategy({
     }
 })));
 passport_1.default.use(new passport_google_oauth20_1.Strategy({
-    clientID: index_1.envConfig.GOOGLE_CLIENT_ID,
-    clientSecret: index_1.envConfig.GOOGLE_CLIENT_SECRET,
-    callbackURL: index_1.envConfig.GOOGLE_CALLBACK_URL,
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.GOOGLE_CALLBACK_URL,
 }, (accessToken, refreshToken, profile, done) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const email = (_a = profile.emails) === null || _a === void 0 ? void 0 : _a[0].value;

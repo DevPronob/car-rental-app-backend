@@ -1,8 +1,9 @@
 import { Server } from 'http';
-import server, { serverApp } from './app';
+
 import { envConfig } from './app/config';
 import mongoose from 'mongoose';
 import { seedSuperAdmin } from './app/utils/seedSuperAdmin';
+import { serverApp } from './app';
 
 let server: Server;
 async function main() {

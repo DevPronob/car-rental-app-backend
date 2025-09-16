@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.io = void 0;
+exports.io = exports.serverApp = void 0;
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
@@ -20,8 +20,8 @@ const socket_io_1 = require("socket.io");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
-const server = http_1.default.createServer(app);
-exports.io = new socket_io_1.Server(server, {
+exports.serverApp = http_1.default.createServer(app);
+exports.io = new socket_io_1.Server(exports.serverApp, {
     cors: {
         origin: "http://localhost:5173",
         methods: ["GET", "POST"],
@@ -30,16 +30,23 @@ exports.io = new socket_io_1.Server(server, {
 });
 exports.io.on("connection", (socket) => {
     console.log(socket.id, "connected");
-    socket.on("joiedRoom", (rideId) => {
+    // Join a ride room
+    socket.on("joinRoom", (rideId) => {
+        console.log(`Socket ${socket.id} joined ride room: ${rideId}`);
         socket.join(rideId);
     });
+    // Driver sends live location → broadcast to riders in that room
     socket.on("sendDriverLocation", (rideId, location) => {
+        console.log("Driver location update:", location);
         exports.io.to(rideId).emit("driverLocationUpdate", location);
     });
+    // End ride → notify riders
     socket.on("endRide", (rideId) => {
+        console.log(`Ride ${rideId} ended`);
         exports.io.to(rideId).emit("rideEnded", { message: "Ride has ended" });
         socket.leave(rideId);
     });
+    // Disconnect
     socket.on("disconnect", () => {
         console.log("Client disconnected:", socket.id);
     });
