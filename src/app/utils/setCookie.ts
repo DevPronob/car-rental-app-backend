@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { Response } from "express";
 
 export interface AuthTokens {
   accessToken?: string;
@@ -6,19 +6,18 @@ export interface AuthTokens {
 }
 
 export const setAuthCookie = (res: Response, tokenInfo: AuthTokens) => {
-  if (tokenInfo.accessToken) {
-    res.cookie('accessToken', tokenInfo.accessToken, {
+  const cookieOptions = {
     httpOnly: true,
-  secure:false,
-  sameSite: 'lax',
-    });
+    secure: true,         // ✅ required on Vercel (HTTPS only)
+    sameSite: "none" as const, // ✅ allow cross-origin frontend <-> backend
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  };
+
+  if (tokenInfo.accessToken) {
+    res.cookie("accessToken", tokenInfo.accessToken, cookieOptions);
   }
 
   if (tokenInfo.refreshToken) {
-    res.cookie('refreshToken', tokenInfo.refreshToken, {
-    httpOnly: true,
-  secure: false,
-  sameSite: 'lax',
-    });
+    res.cookie("refreshToken", tokenInfo.refreshToken, cookieOptions);
   }
 };
