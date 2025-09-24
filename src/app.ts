@@ -21,25 +21,23 @@ app.use(express.json());
 app.use(
   cors({
     origin: [
-      "http://localhost:5173", // dev frontend
-      "https://rent-sharing-system.vercel.app", // deployed frontend
+      "http://localhost:5173", 
+      "https://rent-sharing-system.vercel.app", 
     ],
     credentials: true,
   })
 );
 
-// ✅ COOKIE PARSER BEFORE SESSION
 app.use(cookieParser());
 
-// ✅ SESSION
 app.use(
   expressSession({
     secret: "secret",
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === "production", // true in prod
-      sameSite: "none", // required for cross-site
+      secure: process.env.NODE_ENV === "production", 
+      sameSite: "none", 
     },
   })
 );
@@ -58,7 +56,7 @@ app.use("/api/v1", router);
 app.use(globalErrorHandler);
 app.use(notFound);
 
-// ✅ Socket.IO server
+
 export const serverApp = http.createServer(app);
 export const io = new Server(serverApp, {
   cors: {
