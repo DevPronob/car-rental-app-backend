@@ -23,21 +23,19 @@ app.use(express_1.default.json());
 // ✅ CORS FIRST
 app.use((0, cors_1.default)({
     origin: [
-        "http://localhost:5173", // dev frontend
-        "https://rent-sharing-system.vercel.app", // deployed frontend
+        "http://localhost:5173",
+        "https://rent-sharing-system.vercel.app",
     ],
     credentials: true,
 }));
-// ✅ COOKIE PARSER BEFORE SESSION
 app.use((0, cookie_parser_1.default)());
-// ✅ SESSION
 app.use((0, express_session_1.default)({
     secret: "secret",
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: process.env.NODE_ENV === "production", // true in prod
-        sameSite: "none", // required for cross-site
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
     },
 }));
 app.use(passport_1.default.initialize());
@@ -50,7 +48,6 @@ app.get("/", (req, res) => {
 app.use("/api/v1", routes_1.router);
 app.use(globalErrorHandaler_1.default);
 app.use(notFound_1.notFound);
-// ✅ Socket.IO server
 exports.serverApp = http_1.default.createServer(app);
 exports.io = new socket_io_1.Server(exports.serverApp, {
     cors: {

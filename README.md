@@ -72,6 +72,6 @@ Use the following credentials to log in as an admin:
 
 
 ## 🔗 Live Links
-- **Backend API**: https://ride-booking-system-backend-ten.vercel.app/  
-
+- **Frontend API**: https://rent-sharing-system.vercel.app/
+- **Backend Live**: https://ride-booking-system-backend-ten.vercel.app/  
 ---

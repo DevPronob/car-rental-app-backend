@@ -98,7 +98,7 @@ const googleCallback =catchAsync(async (req:Request,res:Response) =>{
     //     data: null,
     // })
 
-    res.redirect(`http://localhost:5173/${redirectTo}`);
+    res.redirect(`https://rent-sharing-system.vercel.app/${redirectTo}`);
 })
 
 export const AuthControllers = {

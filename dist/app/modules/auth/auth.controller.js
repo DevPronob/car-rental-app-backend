@@ -104,7 +104,7 @@ const googleCallback = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void
     //     message: "Password Changed Successfully",
     //     data: null,
     // })
-    res.redirect(`http://localhost:5173/${redirectTo}`);
+    res.redirect(`https://rent-sharing-system.vercel.app/${redirectTo}`);
 }));
 exports.AuthControllers = {
     registerUser,
