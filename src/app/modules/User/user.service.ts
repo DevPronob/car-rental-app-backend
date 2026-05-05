@@ -20,7 +20,7 @@ const registerUserIntoDb =async(payload:IUser) =>{
         ...rest
     })
     const result = user.toObject();
-    delete result.password;
+    delete (result as any).password;
     return result;
 }
 

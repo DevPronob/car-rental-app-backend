@@ -1,31 +1,45 @@
-import express, { Application, Request, Response } from 'express'
-import { globalErrorHandler } from './app/middlewares/globalErrorHandler'
-import { notFound } from './app/middlewares/notFound'
-import { router } from './app/routes'
-import cors from 'cors'
-const app: Application = express()
+import express, { Application, Request, Response } from 'express';
+import cors from 'cors';
+import { globalErrorHandler } from './app/middlewares/globalErrorHandler';
+import { notFound } from './app/middlewares/notFound';
+import { router } from './app/routes';
 
-app.use(express.json());
+const app: Application = express();
+
+// ✅ CORS FIRST (very important)
 app.use(cors({
-  origin: (origin, callback) => {
-    const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174'];
-    if (!origin || allowedOrigins.includes(origin)) {
+  origin: function (origin, callback) {
+    // allow requests with no origin (like Postman)
+    if (!origin) return callback(null, true);
+
+    if (
+      origin.includes('localhost') ||
+      origin.includes('vercel.app')
+    ) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
+  credentials: true,
 }));
 
-app.use("/api/v1", router)
+// ✅ Handle preflight requests
+app.options(/.*/, cors());
+
+// ✅ Body parser
+app.use(express.json());
+
+// ✅ Routes
+app.use('/api/v1', router);
+
+// ✅ Test route
 app.get('/', (req: Request, res: Response) => {
-  res.send('Hello World!')
-})
+  res.send('Hello World!');
+});
 
-app.use(globalErrorHandler)
-app.use(notFound)
+// ✅ Error handlers (keep LAST)
+app.use(globalErrorHandler);
+app.use(notFound);
 
-export default app
+export default app;

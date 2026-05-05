@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import httpStatus from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { AppError } from '../errors/AppErrror';
 import { catchAsync } from '../utils/catchAsync';
 import { verifyToken } from '../utils/jwt';
@@ -10,55 +10,35 @@ const auth = (...requiredRoles: string[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     let token = req.headers.authorization;
 
-    // checking if the token is missing
     if (!token) {
-      throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
+      throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not authorized!');
     }
 
-    // Handle Bearer prefix if present
     if (token.startsWith('Bearer ')) {
       token = token.split(' ')[1];
     }
 
-    // checking if the given token is valid
-    let decoded;
+    let decoded: any;
     try {
-      decoded = verifyToken(
-        token,
-        config.jwt_access_secret as string,
-      ) as any;
-    } catch (error) {
-      throw new AppError(httpStatus.UNAUTHORIZED, 'Unauthorized');
+      decoded = verifyToken(token, config.jwt_access_secret as string);
+    } catch {
+      throw new AppError(StatusCodes.UNAUTHORIZED, 'Invalid token');
     }
 
-    const { role, email, _id, id } = decoded;
+    const userId = decoded._id || decoded.id;
 
-    // checking if the user exists
-    const user = await User.findOne({
-      $or: [
-        { _id: _id || id },
-        { email: { $regex: new RegExp(`^${email}$`, 'i') } }
-      ]
-    });
+    const user = await User.findById(userId);
 
     if (!user) {
-      throw new AppError(
-        httpStatus.NOT_FOUND, 
-        `User session invalid. Please log in again. (Ref: ${email || _id || id})`
-      );
+      throw new AppError(StatusCodes.NOT_FOUND, 'User not found');
     }
-    
+
     if (user.status !== 'ACTIVE') {
-      throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked ! !');
+      throw new AppError(StatusCodes.FORBIDDEN, 'User is blocked');
     }
 
-    console.log('Auth Check:', { requiredRoles, userRole: user.role, email: user.email });
-
-    if (requiredRoles && !requiredRoles.includes(user.role)) {
-      throw new AppError(
-        httpStatus.UNAUTHORIZED,
-        `You are not authorized! Required: ${requiredRoles}, Current: ${user.role}`,
-      );
+    if (requiredRoles.length && !requiredRoles.includes(user.role)) {
+      throw new AppError(StatusCodes.UNAUTHORIZED, 'Not authorized');
     }
 
     req.user = user;
